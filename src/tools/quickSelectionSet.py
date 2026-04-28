@@ -6,6 +6,11 @@ class QuickSelectSet():
     def __init__(self):
         pass
 
+    def SelectControls(self):
+        # selects controls and keeps it in memory
+        pass
+
+
 class QuickSelectSetWidget(MayaWidget):
     def __init__(self):
         super().__init__()
@@ -36,6 +41,9 @@ class QuickSelectSetWidget(MayaWidget):
         self.setNameBtn.clicked.connect(self.SetNameBtnClicked)
         self.masterLayout.addWidget(self.setNameBtn)
 
+    def GetWidgetHash(self):
+        return "3e4ad28da57f3aff2c91972c083aabecbe5cd75559d58f77a8fce537d22908cc"
+
     def SetNameBtnClicked(self):
         self.name = self.nameLineEdit.text()
         self.control = self.controlSelectLineEdit()
@@ -48,7 +56,7 @@ class QuickSelectSetWidget(MayaWidget):
 
 
     def ControlSelectBtnClicked(self):
-        pass
+        self.QuickSelectSet()
 
 
 def Run():
