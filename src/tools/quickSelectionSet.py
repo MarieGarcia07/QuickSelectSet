@@ -7,7 +7,11 @@ class QuickSelectSet():
         pass
 
     def SelectControls(self):
-        # selects controls and keeps it in memory
+        # grabs controls that are selected and keeps it in memory
+        pass
+
+    def SelectionSet(self):
+        # has it so that when you click the button, it grabs SelectControls()
         pass
 
 
@@ -30,7 +34,7 @@ class QuickSelectSetWidget(MayaWidget):
         controlSelectLayout = QHBoxLayout()
         self.masterLayout.addLayout(controlSelectLayout)
         controlSelectLayout.addWidget(QLabel("Controls:"))
-        self.controlSelectLineEdit = QLineEdit()
+        self.controlSelectLineEdit = QLineEdit() # CHANGE THIS
         self.controlSelectLineEdit.setEnabled(False)
         controlSelectLayout.addWidget(self.controlSelectLineEdit)
         controlSelectBtn = QPushButton("<<<")
@@ -46,17 +50,26 @@ class QuickSelectSetWidget(MayaWidget):
 
     def SetNameBtnClicked(self):
         self.name = self.nameLineEdit.text()
-        self.control = self.controlSelectLineEdit()
 
-        if not self.name & self.control:
+        if not self.name(self, "selectedControls"):
             return
+        
+        controls = self.selectedControls
         
         nameSelectBtn = QPushButton(self.name)
         self.masterLayout.addWidget(nameSelectBtn)
+        nameSelectBtn.clicked.connect(lambda: mc.select(controls))
 
 
     def ControlSelectBtnClicked(self):
-        self.QuickSelectSet()
+        selection = mc.ls(selection=True)
+
+        if not selection:
+            return
+        
+        self.selectedControls = selection
+
+        self.controlSelectLineEdit.setText(", ".joint(selection))
 
 
 def Run():
