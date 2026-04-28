@@ -1,4 +1,4 @@
-# Maya Rigging Tools
+# Quick Select Set Tool
 ---------------------------------------------------
 
 ## How To Install
@@ -10,17 +10,6 @@
 |Python| 3.12 |
 |Pyside|  6   |
 |Maya  |>=2025|
-
-
-## Limb Rigger
-
-<img src="assets/limbRiggerScrenshot.png" width=300>
-
-* Rig arms and legs with ikfk blend
-
-## Maya To Unreal Engine
-
-* Sends maya animations directly to unreal engine
 
 ## Quick Select Set
 
