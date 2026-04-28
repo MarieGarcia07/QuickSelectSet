@@ -21,7 +21,3 @@
 ## Maya To Unreal Engine
 
 * Sends maya animations directly to unreal engine
-
-## Quick Selection Set
-
-* Configures quick selection sets to easily select rigging controls
