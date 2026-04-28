@@ -21,3 +21,7 @@
 ## Maya To Unreal Engine
 
 * Sends maya animations directly to unreal engine
+
+## Quick Select Set
+
+* Creates UI window for easily creating and select selection sets
