@@ -17,33 +17,34 @@ class QuickSelectSetWidget(MayaWidget):
 
         self.nameLayout = QHBoxLayout()
         self.masterLayout.addLayout(self.nameLayout)
-        self.nameLayout.addWidget(QLabel("Name Base:"))
+        self.nameLayout.addWidget(QLabel("Name:"))
 
         self.nameLineEdit = QLineEdit()
         self.nameLayout.addWidget(self.nameLineEdit)
 
-        self.setNameBtn = QPushButton("Set Name of Selection")
-        self.setNameBtn.clicked.connect(self.SetNameBtnClicked)
-        self.nameLayout.addWidget(self.setNameBtn)
+        controlSelectLayout = QHBoxLayout()
+        self.masterLayout.addLayout(controlSelectLayout)
+        controlSelectLayout.addWidget(QLabel("Controls:"))
+        self.controlSelectLineEdit = QLineEdit()
+        self.controlSelectLineEdit.setEnabled(False)
+        controlSelectLayout.addWidget(self.controlSelectLineEdit)
+        controlSelectBtn = QPushButton("<<<")
+        controlSelectLayout.addWidget(controlSelectBtn)
+        controlSelectBtn.clicked.connect(self.ControlSelectBtnClicked)
 
-        # selectSetLayout = QHBoxLayout()
-        # self.masterLayout.addLayout(selectSetLayout)
-        # selectSetLayout.addWidget(QLabel("Select Group:"))
-        # self.selectSetLineEdit = QLineEdit()
-        # self.selectSetLineEdit.setEnabled(False)
-        # selectSetLayout.addWidget(self.selectSetLineEdit)
-        # controlSelectBtn = QPushButton("<<<")
-        # selectSetLayout.addWidget(controlSelectBtn)
-        # controlSelectBtn.clicked.connect(self.ControlSelectBtnClicked)
+        self.setNameBtn = QPushButton("Create Selection Set")
+        self.setNameBtn.clicked.connect(self.SetNameBtnClicked)
+        self.masterLayout.addWidget(self.setNameBtn)
 
     def SetNameBtnClicked(self):
-        name = self.nameLineEdit.text()
+        self.name = self.nameLineEdit.text()
+        self.control = self.controlSelectLineEdit()
 
-        if not name:
+        if not self.name & self.control:
             return
         
-        nameSelectBtn = QPushButton(name)
-        self.quickSelectLayout.addWidget(nameSelectBtn)
+        nameSelectBtn = QPushButton(self.name)
+        self.masterLayout.addWidget(nameSelectBtn)
 
 
     def ControlSelectBtnClicked(self):
