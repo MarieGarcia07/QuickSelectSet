@@ -34,7 +34,7 @@ class QuickSelectSetWidget(MayaWidget):
         controlSelectLayout = QHBoxLayout()
         self.masterLayout.addLayout(controlSelectLayout)
         controlSelectLayout.addWidget(QLabel("Controls:"))
-        self.controlSelectLineEdit = QLineEdit() # CHANGE THIS
+        self.controlSelectLineEdit = QLineEdit() # CHANGE THIS (for widget not controls)
         self.controlSelectLineEdit.setEnabled(False)
         controlSelectLayout.addWidget(self.controlSelectLineEdit)
         controlSelectBtn = QPushButton("<<<")
