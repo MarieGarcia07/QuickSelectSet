@@ -16,7 +16,7 @@
 
 ## Structure
 
-The tool is composed of the following major classes and functions:
+The tool is composed of the following major classes:
 
 #### Quick Select Set
 
@@ -24,11 +24,19 @@ The ```QuickSelectSet``` class has the following responsibilities:
 
 *
 
+```python
+# enter code
+```
+
 #### Quick Select Set Widget
 
 The ```QuickSelectSetWidget``` class has the following responsibilities:
 
-*
+* Creates a window in maya that has:
+  * A box to enter the name of the user's set
+  * A box to enter the controls the user wants in the set
+  * A button to create the set
+  * A button to reset the selection
 
 ```python
 # enter code
