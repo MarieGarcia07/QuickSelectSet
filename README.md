@@ -14,3 +14,24 @@
 ## Quick Select Set
 
 * Creates UI window for easily creating and select selection sets
+
+## Structure
+
+The tool is composed of the following major classes and functions:
+
+#### Quick Select Set
+
+The ```QuickSelectSet``` class has the following responsibilities:
+
+*
+
+#### Quick Select Set Widget
+
+The ```QuickSelectSetWidget``` class has the following responsibilities:
+
+*
+
+```python
+# enter code
+```
+
