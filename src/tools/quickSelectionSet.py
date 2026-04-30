@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBox
 from core.MayaWidget import MayaWidget
 import maya.cmds as mc
 import maya.utils
+from functools import partial
 
 class QuickSelectSet():
     def __init__(self):
@@ -17,14 +18,24 @@ class QuickSelectSet():
         mc.sets(controls, name=name)
 
     def SelectSet(self, name):
-        if mc.objExists(name):
-            mc.select(name)
+        if not mc.objExists(name):
+            print(f"Set {name} does not exist")
+            return
+        
+        members = mc.sets(name, q=True)
+
+        if not members:
+            print(f"Set {name} is empty")
+            return
+
+        mc.select(members)
     
 
 
 class QuickSelectSetWidget(MayaWidget):
     def __init__(self):
         super().__init__()
+        self.quickSelectSet = QuickSelectSet()  #
         self.setWindowTitle("QuickSelectSet")
 
         self.selectedControls = None
@@ -64,7 +75,7 @@ class QuickSelectSetWidget(MayaWidget):
     def SetNameBtnClicked(self):
         name = self.nameLineEdit.text()
 
-        if not name or not hasattr(self, "selectedControls"):
+        if not name or not self.selectedControls:
             return
 
         controls = self.selectedControls
@@ -74,7 +85,7 @@ class QuickSelectSetWidget(MayaWidget):
         uiBtn = QPushButton(name)
         self.masterLayout.addWidget(uiBtn)
 
-        uiBtn.clicked.connect(lambda _, n=name: self.quickSelectSet.SelectSet(n))
+        uiBtn.clicked.connect(partial(self.quickSelectSet.SelectSet, name))
     
     def ResetSelectionBtnClicked(self):
         self.nameLineEdit.clear()
