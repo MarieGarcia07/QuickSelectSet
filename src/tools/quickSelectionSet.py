@@ -1,8 +1,9 @@
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout
 from core.MayaWidget import MayaWidget
 import maya.cmds as mc
-import maya.utils
 from functools import partial
+
+SET_PREFIX = "QSS_"
 
 class QuickSelectSet():
     def __init__(self):
@@ -12,20 +13,29 @@ class QuickSelectSet():
         if not controls:
             return
         
-        if mc.objExists(name):
-            mc.delete(name)
-        
-        mc.sets(controls, name=name)
+        setName = f"{SET_PREFIX}{name}"
 
-    def SelectSet(self, name):
-        if not mc.objExists(name):
-            print(f"Set {name} does not exist")
+        if mc.objExists(setName):
+            mc.delete(setName)
+        
+        controls = [c for c in controls if mc.objExists(c)]
+
+        if not controls:
             return
         
-        members = mc.sets(name, q=True)
+        mc.sets(controls, name=setName)
+
+    def SelectSet(self, name):
+        setName = f"{SET_PREFIX}{name}"
+
+        if not mc.objExists(setName):
+            print(f"Set {setName} does not exist")
+            return
+        
+        members = mc.sets(setName, q=True)
 
         if not members:
-            print(f"Set {name} is empty")
+            print(f"Set {setName} is empty")
             return
 
         mc.select(members)
@@ -39,7 +49,6 @@ class QuickSelectSetWidget(MayaWidget):
         self.setWindowTitle("QuickSelectSet")
 
         self.selectedControls = None
-        self.selectionSets = []
 
         self.masterLayout = QVBoxLayout()
         self.setLayout(self.masterLayout)
@@ -54,9 +63,11 @@ class QuickSelectSetWidget(MayaWidget):
         controlSelectLayout = QHBoxLayout()
         self.masterLayout.addLayout(controlSelectLayout)
         controlSelectLayout.addWidget(QLabel("Controls:"))
+
         self.controlSelectLineEdit = QLineEdit()
         self.controlSelectLineEdit.setEnabled(False)
         controlSelectLayout.addWidget(self.controlSelectLineEdit)
+
         controlSelectBtn = QPushButton("<<<")
         controlSelectLayout.addWidget(controlSelectBtn)
         controlSelectBtn.clicked.connect(self.ControlSelectBtnClicked)
@@ -69,28 +80,13 @@ class QuickSelectSetWidget(MayaWidget):
         self.setNameBtn.clicked.connect(self.SetNameBtnClicked)
         self.masterLayout.addWidget(self.setNameBtn)
 
+        self.setsLayout = QVBoxLayout()
+        self.masterLayout.addLayout(self.setsLayout)
+
+        self.LoadExistingSets()
+
     def GetWidgetHash(self):
         return "3e4ad28da57f3aff2c91972c083aabecbe5cd75559d58f77a8fce537d22908cc"
-
-    def SetNameBtnClicked(self):
-        name = self.nameLineEdit.text()
-
-        if not name or not self.selectedControls:
-            return
-
-        controls = self.selectedControls
-
-        self.quickSelectSet.CreateSet(name, controls)
-
-        uiBtn = QPushButton(name)
-        self.masterLayout.addWidget(uiBtn)
-
-        uiBtn.clicked.connect(partial(self.quickSelectSet.SelectSet, name))
-    
-    def ResetSelectionBtnClicked(self):
-        self.nameLineEdit.clear()
-        self.controlSelectLineEdit.clear()
-        self.selectedControls = None
 
     def ControlSelectBtnClicked(self):
         selection = mc.ls(selection=True)
@@ -101,20 +97,38 @@ class QuickSelectSetWidget(MayaWidget):
         self.selectedControls = selection
         self.controlSelectLineEdit.setText(", ".join(selection))
 
-    def SelectSet(self, controls):
-        print("Selecting:", controls)
+    def ResetSelectionBtnClicked(self):
+        self.nameLineEdit.clear()
+        self.controlSelectLineEdit.clear()
+        self.selectedControls = None
 
-        if not controls:
-            print("No valid controls stored")
-            return
-        
-        controls = [c for c in controls if isinstance(c, str)]
+    def SetNameBtnClicked(self):
+        name = self.nameLineEdit.text()
 
-        if not controls:
-            print("All controls invalid")
+        if not name or not self.selectedControls:
             return
-        
-        mc.select(controls)
+
+        self.quickSelectSet.CreateSet(name, self.selectedControls)
+
+        self.AddSetButton(name)
+
+        self.ResetSelectionBtnClicked()
+    
+    def AddSetButton(self, name):
+        uiBtn = QPushButton(name)
+        self.setsLayout.addWidget(uiBtn)
+
+        uiBtn.clicked.connect(partial(self.quickSelectSet.SelectSet, name))
+
+    def LoadExistingSets(self):
+        allSets = mc.ls(type="objectSet") or []
+
+        for s in allSets:
+            if not s.startswith(SET_PREFIX):
+                continue
+
+            displayName = s.replace(SET_PREFIX, "")
+            self.AddSetButton(displayName)
 
 def Run():
     quickSelectSetWidget = QuickSelectSetWidget()
