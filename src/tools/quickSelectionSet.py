@@ -9,7 +9,16 @@ class QuickSelectSet():
 
     def CreateSet(self, name, controls):
         if not controls:
-            pass
+            return
+        
+        if mc.objExists(name):
+            mc.delete(name)
+        
+        mc.sets(controls, name=name)
+
+    def SelectSet(self, name):
+        if mc.objExists(name):
+            mc.select(name)
     
 
 
@@ -60,9 +69,12 @@ class QuickSelectSetWidget(MayaWidget):
 
         controls = self.selectedControls
 
-        nameSelectBtn = QPushButton(name)
-        self.masterLayout.addWidget(nameSelectBtn)
-        nameSelectBtn.clicked.connect(lambda: mc.select(controls))
+        self.quickSelectSet.CreateSet(name, controls)
+
+        uiBtn = QPushButton(name)
+        self.masterLayout.addWidget(uiBtn)
+
+        uiBtn.clicked.connect(lambda _, n=name: self.quickSelectSet.SelectSet(n))
     
     def ResetSelectionBtnClicked(self):
         self.nameLineEdit.clear()
@@ -76,7 +88,6 @@ class QuickSelectSetWidget(MayaWidget):
             return
         
         self.selectedControls = selection
-
         self.controlSelectLineEdit.setText(", ".join(selection))
 
     def SelectSet(self, controls):
