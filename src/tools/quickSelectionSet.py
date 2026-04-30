@@ -11,17 +11,18 @@ class QuickSelectSet():
 
     def CreateSet(self, name, controls):
         if not controls:
-            return
+            raise Exception("No controls provided to create a set.")
         
         setName = f"{SET_PREFIX}{name}"
 
         if mc.objExists(setName):
+            raise Exception("Set already exists.")
             mc.delete(setName)
         
         controls = [c for c in controls if mc.objExists(c)]
 
         if not controls:
-            return
+            raise Exception("Controls do not exist.")
         
         mc.sets(controls, name=setName)
 
@@ -29,14 +30,12 @@ class QuickSelectSet():
         setName = f"{SET_PREFIX}{name}"
 
         if not mc.objExists(setName):
-            print(f"Set {setName} does not exist")
-            return
+            raise Exception(f"Set {setName} does not exist")
         
         members = mc.sets(setName, q=True)
 
         if not members:
-            print(f"Set {setName} is empty")
-            return
+            raise Exception(f"Set {setName} is empty")
 
         mc.select(members)
     
@@ -92,7 +91,7 @@ class QuickSelectSetWidget(MayaWidget):
         selection = mc.ls(selection=True)
 
         if not selection:
-            return
+            raise Exception("No controls selected. Please select a valid control(s)")
         
         self.selectedControls = selection
         self.controlSelectLineEdit.setText(", ".join(selection))
@@ -106,7 +105,7 @@ class QuickSelectSetWidget(MayaWidget):
         name = self.nameLineEdit.text()
 
         if not name or not self.selectedControls:
-            return
+            raise Exception("Please enter a valid name and valid controls")
 
         self.quickSelectSet.CreateSet(name, self.selectedControls)
 
