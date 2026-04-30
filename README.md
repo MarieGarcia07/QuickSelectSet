@@ -1,5 +1,4 @@
 # Quick Select Set Tool
----------------------------------------------------
 
 ## How To Install
 + Drag Maya Install file into Maya's viewport
