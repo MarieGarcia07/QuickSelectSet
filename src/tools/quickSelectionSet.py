@@ -3,6 +3,16 @@ from core.MayaWidget import MayaWidget
 import maya.cmds as mc
 import maya.utils
 
+class QuickSelectSet():
+    def __init__(self):
+        pass
+
+    def CreateSet(self, name, controls):
+        if not controls:
+            pass
+    
+
+
 class QuickSelectSetWidget(MayaWidget):
     def __init__(self):
         super().__init__()
@@ -18,7 +28,7 @@ class QuickSelectSetWidget(MayaWidget):
         self.masterLayout.addLayout(self.nameLayout)
         self.nameLayout.addWidget(QLabel("Name:"))
 
-        self.nameLineEdit = QLineEdit()
+        self.nameLineEdit = QLineEdit() # have this not selected when clicking set
         self.nameLayout.addWidget(self.nameLineEdit)
 
         controlSelectLayout = QHBoxLayout()
@@ -39,38 +49,20 @@ class QuickSelectSetWidget(MayaWidget):
         self.setNameBtn.clicked.connect(self.SetNameBtnClicked)
         self.masterLayout.addWidget(self.setNameBtn)
 
-
-
     def GetWidgetHash(self):
         return "3e4ad28da57f3aff2c91972c083aabecbe5cd75559d58f77a8fce537d22908cc"
 
     def SetNameBtnClicked(self):
-        self.name = self.nameLineEdit.text()
+        name = self.nameLineEdit.text()
 
-        if not self.name or not self.selectedControls:
+        if not name or not hasattr(self, "selectedControls"):
             return
-        
-        controls = list(self.selectedControls)
 
-        setData = {"name": self.name, "controls": controls}
-        self.selectionSets.append(setData)
-        
-        rowLayout = QHBoxLayout()
-        self.masterLayout.addLayout(rowLayout)
+        controls = self.selectedControls
 
-        selectBtn = QPushButton(self.name)
-        rowLayout.addWidget(selectBtn)
-
-        print("TYPE:", type(controls), controls)
-        selectBtn.clicked.connect(lambda c=controls: self.SelectSet(c))
-
-        addBtn = QPushButton("+")
-        rowLayout.addWidget(addBtn)
-        addBtn.clicked.connect(lambda _, s=setData: self.AddToSet(s))
-
-        deleteBtn = QPushButton("Delete")
-        rowLayout.addWidget(deleteBtn)
-        deleteBtn.clicked.connect(lambda _, l=rowLayout, s=setData: self.DeleteSet(l, s))
+        nameSelectBtn = QPushButton(name)
+        self.masterLayout.addWidget(nameSelectBtn)
+        nameSelectBtn.clicked.connect(lambda: mc.select(controls))
     
     def ResetSelectionBtnClicked(self):
         self.nameLineEdit.clear()
@@ -86,27 +78,6 @@ class QuickSelectSetWidget(MayaWidget):
         self.selectedControls = selection
 
         self.controlSelectLineEdit.setText(", ".join(selection))
-
-    def AddToSet(self, setData):
-        selection = mc.ls(selection=True)
-        if not selection:
-            return
-        
-        for obj in selection:
-            if obj not in setData["controls"]:
-                setData["controls"].append(obj)
-    
-    def DeleteSet(self, layout, setData):
-        if setData in self.selectionSets:
-            self.selectionSets.remove(setData)
-        
-        while layout.count():
-            item = layout.takeAt(0)
-            widget = item.widget()
-            if widget:
-                widget.deleteLater()
-        
-        self.masterLayout.removeItem(layout)
 
     def SelectSet(self, controls):
         print("Selecting:", controls)
