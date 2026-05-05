@@ -108,15 +108,12 @@ class QuickSelectSetWidget(MayaWidget):
             raise Exception("Please enter a valid name and valid controls")
 
         self.quickSelectSet.CreateSet(name, self.selectedControls)
-
-        self.AddSetButton(name)
-
+        self.AddSetBtn(name)
         self.ResetSelectionBtnClicked()
     
-    def AddSetButton(self, name):
+    def AddSetBtn(self, name):
         uiBtn = QPushButton(name)
         self.setsLayout.addWidget(uiBtn)
-
         uiBtn.clicked.connect(partial(self.quickSelectSet.SelectSet, name))
 
     def LoadExistingSets(self):
@@ -127,7 +124,7 @@ class QuickSelectSetWidget(MayaWidget):
                 continue
 
             displayName = s.replace(SET_PREFIX, "")
-            self.AddSetButton(displayName)
+            self.AddSetBtn(displayName)
 
 def Run():
     quickSelectSetWidget = QuickSelectSetWidget()
